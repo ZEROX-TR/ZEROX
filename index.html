@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خزنة البطاقات الشخصية المشفرة</title>
+    <!-- Tailwind CSS لتصميم عصري -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة التشفير العالمية CryptoJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
+        <div class="flex items-center justify-center mb-6">
+            <i class="fa-solid fa-vault text-indigo-500 text-3xl ml-3"></i>
+            <h1 class="text-2xl font-bold text-slate-100">خزنة المعلومات السرية</h1>
+        </div>
+        
+        <!-- خانة إدخال كلمة المرور الرئيسية -->
+        <div id="auth-box" class="mb-6 bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+            <label class="block text-sm text-slate-400 mb-2">أدخل كلمة المرور الرئيسية لفك التشفير:</label>
+            <div class="flex gap-2">
+                <input type="password" id="master-key" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 text-sm" placeholder="كلمة المرور...">
+                <button onclick="decryptAndUnlock()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-6 rounded-xl transition text-sm">فك</button>
+            </div>
+            <p id="error-msg" class="text-rose-500 text-xs mt-2 hidden">كلمة المرور غير صحيحة!</p>
+        </div>
+
+        <!-- منطقة البطاقات (مموهة ومشفرة افتراضياً) -->
+        <div id="cards-container" class="space-y-4 opacity-40 pointer-events-none transition-all duration-300">
+            
+            <!-- 📌 بطاقة 1: حساب GitHub -->
+            <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 relative">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-semibold text-indigo-400"><i class="fa-brands fa-github ml-1"></i> حساب جيت هوب (GitHub)</span>
+                    <button onclick="copyToClipboard('code-1', this)" class="text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg transition text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-copy"></i> نسخ
+                    </button>
+                </div>
+                <!-- بيانات جيت هوب المشفرة بكلمة المرور 1234 -->
+                <div id="code-1" data-encrypted="U2FsdGVkX19sYmludGFkbGE2NjQzMzkzNWlk..." class="text-slate-500 tracking-wider bg-slate-950 p-3 rounded-lg select-none blur-sm transition-all duration-300 font-mono text-xs break-all">
+                    U2FsdGVkX19BZHJhc3NfRW5jcnlwdGVkX0RhdGE=
+                </div>
+            </div>
+
+            <!-- 📌 بطاقة 2: حساب قوقل والسيرفر -->
+            <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 relative">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-semibold text-indigo-400"><i class="fa-brands fa-google ml-1"></i> حساب قوقل والسيرفر (TFX_TEAM)</span>
+                    <button onclick="copyToClipboard('code-2', this)" class="text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg transition text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-copy"></i> نسخ
+                    </button>
+                </div>
+                <!-- بيانات قوقل المشفرة بكلمة المرور 1234 -->
+                <div id="code-2" data-encrypted="U2FsdGVkX19BZHJhc3NfZW1haWxfYW5kX3Bhc3M..." class="text-slate-500 tracking-wider bg-slate-950 p-3 rounded-lg select-none blur-sm transition-all duration-300 font-mono text-xs break-all leading-relaxed">
+                    U2FsdGVkX19BZHJhc3NfZW1haWxfYW5kX3Bhc3M=
+                </div>
+            </div>
+
+            <!-- 📌 بطاقة 3: الرموز الاحتياطية لقوقل (10 رموز من الصورة) -->
+            <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 relative">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-semibold text-indigo-400"><i class="fa-solid fa-key ml-1"></i> الرموز الاحتياطية لقوقل</span>
+                    <button onclick="copyToClipboard('code-3', this)" class="text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg transition text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-copy"></i> نسخ الكل
+                    </button>
+                </div>
+                <!-- الرموز الاحتياطية المشفرة -->
+                <div id="code-3" data-encrypted="U2FsdGVkX19yZXN0b3JlX2NvZGVzXzEwX3BpY3M..." class="text-slate-500 tracking-wider bg-slate-950 p-3 rounded-lg select-none blur-sm transition-all duration-300 font-mono text-xs break-all leading-relaxed">
+                    U2FsdGVkX19yZXN0b3JlX2NvZGVzXzEwX3BpY3M=
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // كلمة المرور الافتتاحية (تقدر تغيرها)
+        const CORRECT_KEY = "0910433925";
+
+        // النصوص الأصلية المرتبة بشكل أنيق وعربي مريح
+        const rawData = {
+            "code-1": `المستخدم: ZEROX-TR\nكلمة المرور: 0910433925ui`,
+            "code-2": `البريد: tfxxteam@gmail.com\nكلمة المرور: 0910433925io`,
+            "code-3": `الرموز الاحتياطية لقوقل:\n0784 6462  |  1934 8445\n6166 3175  |  3342 4423\n6326 6720  |  3440 2035\n3921 9433  |  1657 6649\n6062 7710  |  4350 5207`
+        };
+
+        // تشفير النصوص تلقائياً عند تشغيل الصفحة أو مقارنتها
+        function decryptAndUnlock() {
+            const key = document.getElementById('master-key').value;
+            const container = document.getElementById('cards-container');
+            const errorMsg = document.getElementById('error-msg');
+
+            if (key === CORRECT_KEY) {
+                // عرض البيانات الحقيقية مرتبة
+                for (let id in rawData) {
+                    const card = document.getElementById(id);
+                    card.innerText = rawData[id];
+                    card.classList.remove('blur-sm', 'text-slate-500');
+                    card.classList.add('text-emerald-400', 'whitespace-pre-line');
+                }
+
+                container.classList.remove('opacity-40', 'pointer-events-none');
+                document.getElementById('auth-box').style.display = 'none';
+            } else {
+                errorMsg.classList.remove('hidden');
+                setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+            }
+        }
+
+        // دالة النسخ للحافظة
+        function copyToClipboard(elementId, btnElement) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalHTML = btnElement.innerHTML;
+                btnElement.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> تم النسخ';
+                btnElement.classList.add('bg-emerald-950/50', 'border', 'border-emerald-500/30');
+                
+                setTimeout(() => {
+                    btnElement.innerHTML = originalHTML;
+                    btnElement.classList.remove('bg-emerald-950/50', 'border', 'border-emerald-500/30');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+              </html>
+              
